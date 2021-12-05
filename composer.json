@@ -31,7 +31,8 @@
         "symfony/yaml": "5.4.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.36"
+        "symfony/maker-bundle": "^1.36",
+        "zircote/swagger-php": "^4.0"
     },
     "config": {
         "optimize-autoloader": true,

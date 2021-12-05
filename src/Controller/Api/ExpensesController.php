@@ -15,7 +15,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(
+ *     title="Expenses endpoint",
+ *     version="0.1",
+ *     @OA\Contact(
+ *       email="neon1024@gmail.com"
+ *     )
+ * )
+ */
 class ExpensesController extends AbstractController
 {
     /**
@@ -25,6 +35,10 @@ class ExpensesController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses", methods={"GET"})
+     * @OA\Get(
+     *     path="/api/expenses",
+     *     @OA\Response(response="200", description="List all expenses")
+     * )
      */
     public function index(ManagerRegistry $doctrine): Response
     {
@@ -41,7 +55,12 @@ class ExpensesController extends AbstractController
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/api/expenses/{id}", methods={"GET"})
+     * @Route("/api/expenses/{id}", methods={"GET"})\
+     * @OA\Get(
+     *     path="/api/expenses/{id}",
+     *     @OA\Response(response="200", description="View a single expense")
+     *     @OA\Response(response="404", description="Expense cannot be found")
+     * )
      */
     public function read(ManagerRegistry $doctrine, int $id): Response
     {
@@ -63,7 +82,12 @@ class ExpensesController extends AbstractController
      * @param \Symfony\Component\HttpFoundation\Request $request Parsed request object
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/api/expenses/new", methods={"POST"})
+     * @Route("/api/expenses", methods={"POST"})
+     * @OA\Get(
+     *     path="/api/expenses",
+     *     @OA\Response(response="200", description="List all expenses")
+     *     @OA\Response(response="400", description="Invalid expense type id")
+     * )
      */
     public function create(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -99,6 +123,12 @@ class ExpensesController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses/{id}", methods={"PUT", "PATCH"})
+     * @OA\Get(
+     *     path="/api/expenses/{id}",
+     *     @OA\Response(response="200", description="Update an expense")
+     *     @OA\Response(response="404", description="Expense cannot be found")
+     *     @OA\Response(response="400", description="Invalid expense type id")
+     * )
      */
     public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
     {
@@ -139,6 +169,11 @@ class ExpensesController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses/{id}", methods={"DELETE"})
+     * @OA\Get(
+     *     path="/api/expenses/{id}",
+     *     @OA\Response(response="200", description="Update an expense")
+     *     @OA\Response(response="404", description="Expense cannot be found")
+     * )
      */
     public function delete(ManagerRegistry $doctrine, int $id): Response
     {
