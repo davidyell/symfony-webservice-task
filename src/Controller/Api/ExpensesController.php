@@ -132,10 +132,28 @@ class ExpensesController extends AbstractController
     }
 
     /**
-     * @Route("/api/delete", methods={"DELETE"})
+     * Delete an expense
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
+     * @param int $id Expense id
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/api/expenses/{id}", methods={"DELETE"})
      */
-    public function delete(): Response
+    public function delete(ManagerRegistry $doctrine, int $id): Response
     {
-        return new Response(null, 200);
+        $expense = $doctrine
+            ->getRepository(Expenses::class)
+            ->find($id);
+
+        if ($expense instanceof Expenses === false) {
+            return $this->json(['error' => 'Expense cannot be found'], 404);
+        }
+
+        $manager = $doctrine->getManager();
+        $manager->remove($expense);
+        $manager->flush();
+
+        return $this->json(['success' => 'Expense has been deleted']);
     }
 }
