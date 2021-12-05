@@ -74,8 +74,9 @@ class ExpensesController extends AbstractController
         $expense->setDescription($request->request->get('description'));
         $expense->setValue($request->request->get('value'));
 
-        $expenseTypeId = $request->request->get('type_id');
-        $expenseType = $doctrine->getRepository(ExpenseTypes::class)->find($expenseTypeId);
+        $expenseType = $doctrine
+            ->getRepository(ExpenseTypes::class)
+            ->findExpenseTypeById((int)$request->request->get('type_id'));
 
         if ($expenseType instanceof ExpenseTypes === false) {
             return $this->json(['error' => 'Invalid expense type id'], 400);
@@ -90,11 +91,44 @@ class ExpensesController extends AbstractController
     }
 
     /**
-     * @Route("/api/update", methods={"PUT", "PATCH"})
+     * Update an existing expense
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
+     * @param \Symfony\Component\HttpFoundation\Request $request Parsed request object
+     * @param int $id Expense id
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/api/expenses/{id}", methods={"PUT", "PATCH"})
      */
-    public function update(): Response
+    public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
     {
-        return new Response(null, 200);
+        $expense = $doctrine
+            ->getRepository(Expenses::class)
+            ->find($id);
+
+        if ($expense instanceof Expenses === false) {
+            return $this->json(['error' => 'Expense cannot be found'], 404);
+        }
+
+        $expense->setTitle($request->request->get('title', $expense->getTitle()));
+        $expense->setDescription($request->request->get('description', $expense->getDescription()));
+        $expense->setValue($request->request->get('value', $expense->getValue()));
+
+        if ($request->request->get('type_id') !== null) {
+            $expenseType = $doctrine
+                ->getRepository(ExpenseTypes::class)
+                ->findExpenseTypeById((int)$request->request->get('type_id'));
+
+            if ($expenseType instanceof ExpenseTypes === false) {
+                return $this->json(['error' => 'Invalid expense type id'], 400);
+            }
+
+            $expense->setType($expenseType);
+        }
+
+        $doctrine->getManager()->flush();
+
+        return $this->json(['updated' => 'Expense has been updated']);
     }
 
     /**
