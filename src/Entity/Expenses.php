@@ -106,6 +106,7 @@ class Expenses implements \JsonSerializable
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'value' => $this->getValue(),
+            'type' => $this->getType()->getName(),
         ];
     }
 }
