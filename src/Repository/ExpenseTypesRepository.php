@@ -19,32 +19,20 @@ class ExpenseTypesRepository extends ServiceEntityRepository
         parent::__construct($registry, ExpenseTypes::class);
     }
 
-    // /**
-    //  * @return ExpenseTypes[] Returns an array of ExpenseTypes objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Find an existing expense type
+     *
+     * @param int $id The expense type id
+     * @return \App\Entity\ExpenseTypes|null
+     */
+    public function findExpenseTypeById(int $id): ?ExpenseTypes
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $expenseType = $this->find($id);
 
-    /*
-    public function findOneBySomeField($value): ?ExpenseTypes
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if ($expenseType instanceof ExpenseTypes === false) {
+            return null;
+        }
+
+        return $expenseType;
     }
-    */
 }
