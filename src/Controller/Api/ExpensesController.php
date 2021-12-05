@@ -12,6 +12,7 @@ use App\Entity\Expenses;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ExpensesController
@@ -37,11 +38,19 @@ class ExpensesController
     }
 
     /**
-     * @Route("/api/read", methods={"GET"})
+     * @Route("/api/expenses/{id}", methods={"GET"})
      */
-    public function read(): Response
+    public function read(ManagerRegistry $doctrine, int $id): Response
     {
-        return new Response(null, 200);
+        $expense = $doctrine
+            ->getRepository(Expenses::class)
+            ->find($id);
+
+        if ($expense instanceof Expenses === false) {
+            return new JsonResponse(['error' => 'Expense cannot be found'], 404);
+        }
+
+        return new JsonResponse($expense);
     }
 
     /**
