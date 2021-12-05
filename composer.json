@@ -67,7 +67,8 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "phpcs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src"
+        "phpcs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
+        "swagger": "./vendor/bin/openapi --output openapi.json --exclude vendor --format json src"
     },
     "conflict": {
         "symfony/symfony": "*"

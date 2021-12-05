@@ -1,0 +1,94 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Expenses endpoint",
+        "contact": {
+            "email": "neon1024@gmail.com"
+        },
+        "version": "0.1"
+    },
+    "paths": {
+        "/api/expenses": {
+            "get": {
+                "summary": "List expenses",
+                "operationId": "d225afc90ed042ad644c41b83d61babb",
+                "responses": {
+                    "200": {
+                        "description": "List all expenses"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create new expenses",
+                "description": "Create a new expense",
+                "operationId": "505c4d3dfd94974180f28fc0ed7e6c7c",
+                "responses": {
+                    "201": {
+                        "description": "List all expenses"
+                    },
+                    "400": {
+                        "description": "Invalid expense type id"
+                    }
+                }
+            }
+        },
+        "/api/expenses/{id}": {
+            "get": {
+                "summary": "Read a specific expense",
+                "operationId": "0dce208a45ccd0397374a51970fdb358",
+                "responses": {
+                    "200": {
+                        "description": "View a single expense"
+                    },
+                    "404": {
+                        "description": "Expense cannot be found"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update an existing expense",
+                "operationId": "2479b8dc1c6bbed61e5d23546b73ee22",
+                "responses": {
+                    "200": {
+                        "description": "Update an expense"
+                    },
+                    "404": {
+                        "description": "Expense cannot be found"
+                    },
+                    "400": {
+                        "description": "Invalid expense type id"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an existing expense",
+                "description": "Delete an expense",
+                "operationId": "303e66f4d4667e4e3e880a94f85bce53",
+                "responses": {
+                    "200": {
+                        "description": "Update an expense"
+                    },
+                    "404": {
+                        "description": "Expense cannot be found"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Update an existing expense",
+                "description": "Update an existing expense",
+                "operationId": "ab48d3edf6af1848d1a23ece60ba1d75",
+                "responses": {
+                    "200": {
+                        "description": "Update an expense"
+                    },
+                    "404": {
+                        "description": "Expense cannot be found"
+                    },
+                    "400": {
+                        "description": "Invalid expense type id"
+                    }
+                }
+            }
+        }
+    }
+}
