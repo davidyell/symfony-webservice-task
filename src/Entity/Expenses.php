@@ -32,6 +32,12 @@ class Expenses implements \JsonSerializable
      */
     private $value;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=ExpenseTypes::class, inversedBy="expense")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $type;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +75,18 @@ class Expenses implements \JsonSerializable
     public function setValue(string $value): self
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getType(): ?ExpenseTypes
+    {
+        return $this->type;
+    }
+
+    public function setType(?ExpenseTypes $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
