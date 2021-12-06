@@ -4,11 +4,22 @@ Creation of a restful api for managing expenses.
 
 ## Tooling
 * PHP Storm
+* SQLite3
 * Postman
-* PHPCS `composer phpcs`
 
-## Enchancements
+## Scripts
+* PHPCS `composer phpcs`
+* OpenAPI `composer swagger`
+
+## Enhancements
 Using a tool like [Fractal](https://fractal.thephpleague.com/) to manage more complex json responses.
 
 ### Time sheets
-Start: Sun 5th Dec 18:15
+Session 1: 3h 45m
+Session 2: 17:30-
+
+## Testing
+I have implemented a number of unit tests and outlined other testing scenarios as skipped tests.
+
+## TODO:
+ - [ ] Validation rules, length, nullable, etc
