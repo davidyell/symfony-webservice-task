@@ -74,7 +74,8 @@
             "@auto-scripts"
         ],
         "phpcs": "./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
-        "swagger": "./vendor/bin/openapi --output openapi.json --exclude vendor --format json src"
+        "swagger": "./vendor/bin/openapi --output openapi.json --exclude vendor --format json src",
+        "test": "./vendor/bin/phpunit --colors=always --stop-on-error"
     },
     "conflict": {
         "symfony/symfony": "*"
