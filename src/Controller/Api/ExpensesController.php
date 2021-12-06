@@ -136,6 +136,7 @@ class ExpensesController extends AbstractController
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
      * @param \Symfony\Component\HttpFoundation\Request $request Parsed request object
      * @param int $id Expense id
+     * @param \Symfony\Component\Validator\Validator\ValidatorInterface $validator Validator instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses/{id}", methods={"PUT", "PATCH"})
@@ -154,7 +155,7 @@ class ExpensesController extends AbstractController
      *     @OA\Response(response="400", description="Invalid expense type id")
      * )
      */
-    public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
+    public function update(ManagerRegistry $doctrine, Request $request, int $id, ValidatorInterface $validator): Response
     {
         $expense = $doctrine
             ->getRepository(Expenses::class)
@@ -178,6 +179,20 @@ class ExpensesController extends AbstractController
             }
 
             $expense->setType($expenseType);
+        }
+
+        $errors = $validator->validate($expense);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $violation) {
+                /* @var \Symfony\Component\Validator\ConstraintViolation $violation */
+                $messages[] = $violation->getMessage();
+            }
+
+            return $this->json([
+                'error' => 'Expense could not be created',
+                'messages' => $messages
+            ], 422);
         }
 
         $doctrine->getManager()->flush();
