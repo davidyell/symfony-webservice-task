@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\ExpensesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @ORM\Entity(repositoryClass=ExpensesRepository::class)
@@ -111,5 +112,20 @@ class Expenses implements \JsonSerializable
                 'name' => $this->getType()->getName(),
             ]
         ];
+    }
+
+    /**
+     * Add validation
+     *
+     * @param \Symfony\Component\Validator\Mapping\ClassMetadata $metadata
+     */
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('title', new Assert\NotBlank(null, 'Expense title is required'));
+        $metadata->addPropertyConstraint('value', new Assert\NotBlank(null, 'Expense value is required'));
+        $metadata->addPropertyConstraint('value', new Assert\PositiveOrZero(null, 'Expense value must be zero or more'));
+        $metadata->addPropertyConstraint('type', new Assert\NotBlank(null, 'Expense type_id is required'));
+
+        // TODO: Use a callback to validate the the type exists in the database? ..but the entity is already created by this point
     }
 }

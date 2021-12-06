@@ -10,7 +10,9 @@ use App\Repository\ExpenseTypesRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ExpensesControllerTest extends KernelTestCase
 {
@@ -195,9 +197,16 @@ class ExpensesControllerTest extends KernelTestCase
             ->method('getManager')
             ->willReturn($mockObjectManager);
 
+        $mockValidator = $this->getMockBuilder(RecursiveValidator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockValidator->expects($this->once())
+            ->method('validate')
+            ->willReturn([]);
+
         $controller = new ExpensesController();
         $controller->setContainer(static::getContainer());
-        $result = $controller->create($mockManagerRegistry, $request);
+        $result = $controller->create($mockManagerRegistry, $request, $mockValidator);
 
         $this->assertEquals(201, $result->getStatusCode());
     }

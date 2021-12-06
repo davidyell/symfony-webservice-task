@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @OA\Info(
@@ -77,6 +79,7 @@ class ExpensesController extends AbstractController
      *
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
      * @param \Symfony\Component\HttpFoundation\Request $request Parsed request object
+     * @param \Symfony\Component\Validator\Validator\ValidatorInterface $validator Validator instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses", methods={"POST"})
@@ -87,16 +90,14 @@ class ExpensesController extends AbstractController
      *     @OA\Response(response="400", description="Invalid expense type id"),
      * )
      */
-    public function create(ManagerRegistry $doctrine, Request $request): Response
+    public function create(ManagerRegistry $doctrine, Request $request, ValidatorInterface $validator): Response
     {
         $entityManager = $doctrine->getManager();
 
-        // TODO: What if values are missing? Need to add validation
-
         $expense = new Expenses();
-        $expense->setTitle($request->request->get('title'));
+        $expense->setTitle($request->request->get('title', ''));
         $expense->setDescription($request->request->get('description'));
-        $expense->setValue($request->request->get('value'));
+        $expense->setValue($request->request->get('value', ''));
 
         $expenseType = $doctrine
             ->getRepository(ExpenseTypes::class)
@@ -107,6 +108,20 @@ class ExpensesController extends AbstractController
         }
 
         $expense->setType($expenseType);
+
+        $errors = $validator->validate($expense);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $violation) {
+                /* @var \Symfony\Component\Validator\ConstraintViolation $violation */
+                $messages[] = $violation->getMessage();
+            }
+
+            return $this->json([
+                'error' => 'Expense could not be created',
+                'messages' => $messages
+            ], 422);
+        }
 
         $entityManager->persist($expense);
         $entityManager->flush();
@@ -121,6 +136,7 @@ class ExpensesController extends AbstractController
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
      * @param \Symfony\Component\HttpFoundation\Request $request Parsed request object
      * @param int $id Expense id
+     * @param \Symfony\Component\Validator\Validator\ValidatorInterface $validator Validator instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses/{id}", methods={"PUT", "PATCH"})
@@ -139,7 +155,7 @@ class ExpensesController extends AbstractController
      *     @OA\Response(response="400", description="Invalid expense type id")
      * )
      */
-    public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
+    public function update(ManagerRegistry $doctrine, Request $request, int $id, ValidatorInterface $validator): Response
     {
         $expense = $doctrine
             ->getRepository(Expenses::class)
@@ -163,6 +179,20 @@ class ExpensesController extends AbstractController
             }
 
             $expense->setType($expenseType);
+        }
+
+        $errors = $validator->validate($expense);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $violation) {
+                /* @var \Symfony\Component\Validator\ConstraintViolation $violation */
+                $messages[] = $violation->getMessage();
+            }
+
+            return $this->json([
+                'error' => 'Expense could not be created',
+                'messages' => $messages
+            ], 422);
         }
 
         $doctrine->getManager()->flush();
