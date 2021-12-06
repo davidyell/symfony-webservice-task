@@ -12,6 +12,12 @@ Creation of a restful api for managing expenses.
 * OpenAPI `composer swagger`
 * PHPUnit `composer test`
 
+## Setup and run
+* Checkout the repo
+* `composer install`
+* `symfony server:start`
+* Send request to http://127.0.0.1:8000/api/expenses
+
 ## Enhancements
 * Using a tool like [Fractal](https://fractal.thephpleague.com/) to manage more complex json responses.
 * Adding a static analysis tool like [PHP Stan](https://github.com/phpstan/phpstan) or [Psalm](https://psalm.dev/)
