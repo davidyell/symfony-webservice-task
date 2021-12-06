@@ -10,6 +10,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Expenses;
 use App\Entity\ExpenseTypes;
+use App\Repository\ExpensesRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ class ExpensesController extends AbstractController
     /**
      * List expenses
      *
-     * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
+     * @param \App\Repository\ExpensesRepository $repository Doctrine repository instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses", methods={"GET"})
@@ -40,11 +41,9 @@ class ExpensesController extends AbstractController
      *     @OA\Response(response="200", description="List all expenses")
      * )
      */
-    public function index(ManagerRegistry $doctrine): Response
+    public function index(ExpensesRepository $repository): Response
     {
-        $expenses = $doctrine
-            ->getRepository(Expenses::class)
-            ->findAll();
+        $expenses = $repository->findAll();
 
         return $this->json($expenses);
     }
@@ -52,7 +51,7 @@ class ExpensesController extends AbstractController
     /**
      * Read a specific expense
      *
-     * @param \Doctrine\Persistence\ManagerRegistry $doctrine Doctrine instance
+     * @param \App\Repository\ExpensesRepository $repository Doctrine repository instance
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route("/api/expenses/{id}", methods={"GET"})\
@@ -62,11 +61,9 @@ class ExpensesController extends AbstractController
      *     @OA\Response(response="404", description="Expense cannot be found")
      * )
      */
-    public function read(ManagerRegistry $doctrine, int $id): Response
+    public function read(ExpensesRepository $repository, int $id): Response
     {
-        $expense = $doctrine
-            ->getRepository(Expenses::class)
-            ->find($id);
+        $expense = $repository->find($id);
 
         if ($expense instanceof Expenses === false) {
             return $this->json(['error' => 'Expense cannot be found'], 404);
@@ -94,6 +91,8 @@ class ExpensesController extends AbstractController
     {
         $entityManager = $doctrine->getManager();
 
+        // TODO: What if values are missing? Need to add validation
+
         $expense = new Expenses();
         $expense->setTitle($request->request->get('title'));
         $expense->setDescription($request->request->get('description'));
@@ -112,6 +111,7 @@ class ExpensesController extends AbstractController
         $entityManager->persist($expense);
         $entityManager->flush();
 
+        // TODO: How to manage a failure to persist an entity?
         return $this->json(['created' => $expense->getId()], 201);
     }
 
