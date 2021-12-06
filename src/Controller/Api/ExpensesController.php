@@ -91,6 +91,8 @@ class ExpensesController extends AbstractController
     {
         $entityManager = $doctrine->getManager();
 
+        // TODO: What if values are missing? Need to add validation
+
         $expense = new Expenses();
         $expense->setTitle($request->request->get('title'));
         $expense->setDescription($request->request->get('description'));
@@ -109,6 +111,7 @@ class ExpensesController extends AbstractController
         $entityManager->persist($expense);
         $entityManager->flush();
 
+        // TODO: How to manage a failure to persist an entity?
         return $this->json(['created' => $expense->getId()], 201);
     }
 

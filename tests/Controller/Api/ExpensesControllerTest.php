@@ -6,8 +6,11 @@ use App\Controller\Api\ExpensesController;
 use App\Entity\Expenses;
 use App\Entity\ExpenseTypes;
 use App\Repository\ExpensesRepository;
+use App\Repository\ExpenseTypesRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ExpensesControllerTest extends KernelTestCase
 {
@@ -60,10 +63,16 @@ class ExpensesControllerTest extends KernelTestCase
         return $mockManagerRegistry;
     }
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        self::bootKernel();
+    }
+
+
     public function testListingAllExpenses()
     {
-        self::bootKernel();
-
         $expenses = [
             $this->buildExpense('First expense', 'Example expense item', 24.99, 'Bills'),
             $this->buildExpense('Second expense', 'Example expense item', 11.99, 'Other'),
@@ -106,8 +115,6 @@ class ExpensesControllerTest extends KernelTestCase
 
     public function testReadingAnExpense()
     {
-        self::bootKernel();
-
         $expense = $this->buildExpense('First expense', 'Example expense item', 24.99, 'Bills');
 
         $mockRepository = $this->getMockBuilder(ExpensesRepository::class)
@@ -130,10 +137,8 @@ class ExpensesControllerTest extends KernelTestCase
         $this->assertEquals(24.99, $data['value']);
     }
 
-    public function testReadingAnNonExistentExpense()
+    public function testReadingANonExistentExpense()
     {
-        self::bootKernel();
-
         $mockRepository = $this->getMockBuilder(ExpensesRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -150,4 +155,90 @@ class ExpensesControllerTest extends KernelTestCase
         $this->assertStringContainsString('Expense cannot be found', $result->getContent());
     }
 
+    public function testCreatingAnExpense()
+    {
+        $request = new Request();
+        $request->initialize(
+            [],
+            [
+                'type_id' => 3,
+                'title' => 'Example expense',
+                'description' => 'An example expense',
+                'value' => '12.34'
+            ]
+        );
+
+        $expenseType = new ExpenseTypes();
+        $expenseType->setName('Transport');
+
+        $mockRepository = $this->getMockBuilder(ExpenseTypesRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockRepository->expects($this->once())
+            ->method('findExpenseTypeById')
+            ->willReturn($expenseType);
+
+        $mockObjectManager = $this->getMockBuilder(ObjectManager::class)
+            ->getMock();
+        $mockObjectManager->expects($this->once())
+            ->method('persist');
+        $mockObjectManager->expects($this->once())
+            ->method('flush');
+
+        $mockManagerRegistry = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockManagerRegistry->expects($this->once())
+            ->method('getRepository')
+            ->willReturn($mockRepository);
+        $mockManagerRegistry->expects($this->once())
+            ->method('getManager')
+            ->willReturn($mockObjectManager);
+
+        $controller = new ExpensesController();
+        $controller->setContainer(static::getContainer());
+        $result = $controller->create($mockManagerRegistry, $request);
+
+        $this->assertEquals(201, $result->getStatusCode());
+    }
+
+    public function testCreatingAnExpenseWithPartialData()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testCreatingAnExpenseWithInvalidData()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testUpdatingAnExpense()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testUpdatingAnExpenseWhichDoesNotExist()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testUpdatingOnlyTheExpenseType()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testUpdatingAnExpenseWithAnInvalidType()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testDeletingAnExpense()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testDeletingAnExpenseWhichDoesNotExist()
+    {
+        $this->markTestIncomplete();
+    }
 }
