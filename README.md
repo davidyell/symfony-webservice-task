@@ -15,9 +15,9 @@ Creation of a restful api for managing expenses.
 Using a tool like [Fractal](https://fractal.thephpleague.com/) to manage more complex json responses.
 
 ### Time sheets
-Session 1: 3h 45m
-Session 2: 2h 45m
-Total: 6h 30m
+Session 1: 3h 45m  
+Session 2: 2h 45m  
+Total: 6h 30m  
 
 ## Testing
 I have implemented a number of unit tests and outlined other testing scenarios as skipped tests.
