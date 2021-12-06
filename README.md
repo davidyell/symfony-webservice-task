@@ -16,10 +16,12 @@ Using a tool like [Fractal](https://fractal.thephpleague.com/) to manage more co
 
 ### Time sheets
 Session 1: 3h 45m
-Session 2: 17:30-
+Session 2: 2h 45m
+Total: 6h 30m
 
 ## Testing
 I have implemented a number of unit tests and outlined other testing scenarios as skipped tests.
 
 ## TODO:
  - [ ] Validation rules, length, nullable, etc
+ - [ ] Unit testing validation
